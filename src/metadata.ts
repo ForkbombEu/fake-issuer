@@ -44,7 +44,6 @@ export function credentialOffer(config: AppConfig, sessionId: string): unknown {
     grants: {
       authorization_code: {
         issuer_state: sessionId,
-        scope: config.credential_scope,
       },
     },
   };
