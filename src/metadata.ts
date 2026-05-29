@@ -12,6 +12,7 @@ export function credentialIssuerMetadata(config: AppConfig): unknown {
         scope: config.credential_scope,
         cryptographic_binding_methods_supported: ["jwk"],
         credential_signing_alg_values_supported: ["ES256"],
+        vct: config.credential_configuration_id,
         proof_types_supported: {
           jwt: {
             proof_signing_alg_values_supported: ["ES256"],

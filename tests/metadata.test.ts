@@ -12,6 +12,14 @@ describe("metadata", () => {
     expect(configuration.scope).toBe(DEFAULT_CONFIG.credential_scope);
   });
 
+  it("advertises the SD-JWT VC type in issuer metadata", () => {
+    const metadata = credentialIssuerMetadata(DEFAULT_CONFIG) as JsonRecord;
+    const configurations = metadata.credential_configurations_supported as JsonRecord;
+    const configuration = configurations[DEFAULT_CONFIG.credential_configuration_id] as JsonRecord;
+
+    expect(configuration.vct).toBe(DEFAULT_CONFIG.credential_configuration_id);
+  });
+
   it("does not put scope inside authorization_code credential offers", () => {
     const offer = credentialOffer(DEFAULT_CONFIG, "session-id") as JsonRecord;
     const grants = offer.grants as JsonRecord;
