@@ -66,6 +66,7 @@ export function sessionPage(sessionId: string, deeplink: string, qrSvg: string):
       "<div>",
       '<p class="eyebrow">Fake issuance session</p>',
       "<h1>Scan with an EUDI Wallet</h1>",
+      '<p class="session-intro">Scan the offer, then continue the issuance flow in the wallet until the wallet accepts the credential offer.</p>',
       "</div>",
       '<span class="status-chip status-wallet" id="updated-label">not observed</span>',
       "</section>",
@@ -77,17 +78,21 @@ export function sessionPage(sessionId: string, deeplink: string, qrSvg: string):
       "</div>",
       '<div class="qr-empty" id="qr-empty" hidden></div>',
       "</div>",
-      '<p class="scan-text" id="scan-text">Scan with an EUDI Wallet</p>',
+      '<p class="scan-text" id="scan-text">Scan the offer and accept it in the wallet</p>',
+      '<p class="qr-guidance" id="qr-guidance">After scanning, keep going in the wallet issuance flow. Most wallets ask you to accept the issuance before metadata appears here.</p>',
+      '<div class="deeplink-panel" aria-label="Credential offer deeplink">',
+      '<p class="deeplink-label">Same content as the QR code</p>',
       '<a class="deeplink" href="',
       escapedDeeplink,
       '">',
       escapedDeeplink,
       "</a>",
       "</div>",
-      '<div class="card metadata-panel">',
+      "</div>",
+      '<div class="card metadata-panel metadata-pending" id="metadata-panel">',
       '<div class="section-head">',
       "<h2>Wallet metadata</h2>",
-      '<span class="count-chip">live</span>',
+      '<span class="status-chip metadata-state metadata-state-waiting" id="metadata-state-label">waiting</span>',
       "</div>",
       '<div class="metadata-grid" id="metadata-grid">',
       '<div class="metadata-row"><span>client_id</span><code>not observed</code></div>',
@@ -193,7 +198,7 @@ function footerHtml(): string {
 
 function appCss(): string {
   return [
-    ":root { --brand-primary: oklch(0.2955 0.1659 277.31); --brand-primary-700: oklch(0.36 0.18 277.31); --brand-secondary: oklch(0.9464 0.0284 294.59); --brand-secondary-strong: oklch(0.8794 0.0567 294.59); --bg: oklch(1 0 0); --bg-muted: oklch(0.9811 0.0064 308.39); --fg: oklch(0.129 0.042 264.695); --fg-muted: oklch(0.7248 0.0094 286.16); --border: oklch(0.929 0.013 255.508); --border-strong: oklch(0.82 0.015 255.508); --warning: oklch(0.65 0.18 85); --warning-bg: oklch(0.96 0.06 85); --destructive: oklch(0.50 0.22 25); --wallet: oklch(0.45 0.18 300); --wallet-bg: oklch(0.95 0.04 300); --radius-md: 6px; --radius-lg: 10px; --radius-pill: 999px; --shadow-sm: 0 1px 2px rgba(0,0,0,.04); --max-width: 1280px; --topbar-height: 56px; }",
+    ":root { --brand-primary: oklch(0.2955 0.1659 277.31); --brand-primary-700: oklch(0.36 0.18 277.31); --brand-secondary: oklch(0.9464 0.0284 294.59); --brand-secondary-strong: oklch(0.8794 0.0567 294.59); --bg: oklch(1 0 0); --bg-muted: oklch(0.9811 0.0064 308.39); --fg: oklch(0.129 0.042 264.695); --fg-muted: oklch(0.7248 0.0094 286.16); --border: oklch(0.929 0.013 255.508); --border-strong: oklch(0.82 0.015 255.508); --warning: oklch(0.65 0.18 85); --warning-bg: oklch(0.96 0.06 85); --success: oklch(0.55 0.18 150); --success-bg: oklch(0.95 0.04 150); --destructive: oklch(0.50 0.22 25); --wallet: oklch(0.45 0.18 300); --wallet-bg: oklch(0.95 0.04 300); --radius-md: 6px; --radius-lg: 10px; --radius-pill: 999px; --shadow-sm: 0 1px 2px rgba(0,0,0,.04); --max-width: 1280px; --topbar-height: 56px; }",
     "*, *::before, *::after { box-sizing: border-box; }",
     "body { margin: 0; min-height: 100vh; background: var(--brand-secondary); color: var(--fg); font-family: Manrope, system-ui, -apple-system, Segoe UI, sans-serif; font-size: 14px; line-height: 1.571; -webkit-font-smoothing: antialiased; }",
     "h1, h2, p { margin: 0; }",
@@ -252,13 +257,28 @@ function appCss(): string {
     "dd { margin: 4px 0 0; color: var(--fg-muted); font-size: 13px; line-height: 1.5; }",
     ".session-page { background: var(--brand-secondary); }",
     ".session-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 24px; }",
+    ".session-header > div { display: grid; gap: 10px; max-width: 760px; }",
+    ".session-intro { max-width: 680px; color: var(--fg-muted); font-size: 16px; line-height: 1.6; }",
     ".session-layout { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 24px; }",
     ".qr-panel { display: grid; gap: 16px; align-content: start; }",
     ".qr-box { width: min(100%, 336px); aspect-ratio: 1; display: grid; place-items: center; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg-muted); padding: 20px; }",
     ".qr-code svg { display: block; width: 100%; height: auto; }",
     ".qr-empty { width: 100%; height: 100%; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); background: var(--brand-secondary-strong); }",
     ".scan-text { color: var(--fg); font-size: 22px; font-weight: 700; line-height: 1.364; }",
+    ".qr-guidance { color: var(--fg-muted); font-size: 14px; line-height: 1.6; }",
+    ".deeplink-panel { display: grid; gap: 8px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-muted); }",
+    ".deeplink-label { color: var(--fg-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; }",
     ".deeplink { overflow-wrap: anywhere; color: var(--brand-primary); font-family: JetBrains Mono, Fira Code, Cascadia Code, ui-monospace, monospace; font-size: 12px; line-height: 1.5; }",
+    ".metadata-panel { transition: background 220ms ease-out, border-color 220ms ease-out, box-shadow 220ms ease-out; }",
+    ".metadata-pending { background: color-mix(in oklch, var(--bg) 74%, var(--bg-muted)); }",
+    ".metadata-pending .metadata-row, .metadata-pending .metadata-json { opacity: .56; filter: grayscale(1); }",
+    ".metadata-ready { border-color: color-mix(in oklch, var(--success) 42%, var(--border)); background: var(--bg); }",
+    ".metadata-flash { animation: metadata-flash 1400ms ease-out; }",
+    ".metadata-state { min-width: 88px; justify-content: center; }",
+    ".metadata-state-waiting { background: var(--warning-bg); color: var(--warning); }",
+    ".metadata-state-waiting::before { border: 2px solid color-mix(in oklch, var(--warning) 28%, transparent); border-top-color: var(--warning); background: transparent; animation: metadata-spin 900ms linear infinite; }",
+    ".metadata-state-done { background: var(--success-bg); color: var(--success); }",
+    ".metadata-state-done::before { background: var(--success); }",
     ".metadata-grid { display: grid; gap: 8px; margin-bottom: 16px; }",
     ".metadata-row { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-muted); }",
     ".metadata-row span { color: var(--fg-muted); font-size: 13px; font-weight: 600; }",
@@ -275,6 +295,9 @@ function appCss(): string {
     ".readme-card li { margin-top: 6px; }",
     ".readme-card code { padding: 1px 4px; border-radius: var(--radius-md); background: var(--bg-muted); }",
     ".readme-card pre code { padding: 0; background: transparent; }",
+    "@keyframes metadata-spin { to { transform: rotate(360deg); } }",
+    "@keyframes metadata-flash { 0% { background: var(--warning-bg); box-shadow: 0 0 0 0 color-mix(in oklch, var(--warning) 32%, transparent); } 30% { background: var(--success-bg); box-shadow: 0 0 0 6px color-mix(in oklch, var(--success) 20%, transparent); } 100% { background: var(--bg); box-shadow: var(--shadow-sm); } }",
+    "@media (prefers-reduced-motion: reduce) { .metadata-state-waiting::before, .metadata-flash { animation: none; } }",
     "@media (max-width: 860px) { h1 { font-size: 32px; } h2 { font-size: 22px; } .container, .topbar-inner, .hero-inner, .footer-inner { padding-left: 16px; padding-right: 16px; } .hero-band { padding: 40px 0; } .hero-inner, .session-layout { grid-template-columns: 1fr; } .session-header, .section-head, .footer-content { flex-direction: column; align-items: stretch; } .footer-links { justify-content: flex-start; } .metadata-row { grid-template-columns: 1fr; } .qr-box { width: 100%; max-width: 336px; } }",
   ].join("\n");
 }
@@ -356,7 +379,7 @@ function inlineMarkdown(value: string): string {
 }
 
 function clientScript(): string {
-  return '(function () {\n  const sessionId = window.__FAKE_ISSUER_SESSION_ID__;\n  const qrCode = document.getElementById("qr-code");\n  const qrEmpty = document.getElementById("qr-empty");\n  const scanText = document.getElementById("scan-text");\n  const statusLabel = document.getElementById("status-label");\n  const updatedLabel = document.getElementById("updated-label");\n  const metadataGrid = document.getElementById("metadata-grid");\n  const metadataJson = document.getElementById("metadata-json");\n\n  function setQrConsumed(consumed) {\n    qrCode.hidden = consumed;\n    qrEmpty.hidden = !consumed;\n    scanText.textContent = consumed ? "QR consumed" : "Scan with an EUDI Wallet";\n  }\n\n  function metadataRows(session) {\n    const walletJwks = session.observed.wallet_jwks.observed\n      ? JSON.stringify(session.observed.wallet_jwks.jwks)\n      : "not observed";\n    const dpopJwk = session.observed.dpop_jwk.observed\n      ? JSON.stringify(session.observed.dpop_jwk.jwk)\n      : "not observed";\n    return [\n      ["client_id", session.observed.client_id.value || "not observed"],\n      ["redirect_uri", session.observed.redirect_uri.value || "not observed"],\n      ["wallet_jwks", walletJwks],\n      ["dpop_jwk", dpopJwk],\n    ];\n  }\n\n  function render(session) {\n    setQrConsumed(session.status !== "created");\n    statusLabel.textContent = session.status.replaceAll("_", " ");\n    const observed = Boolean(\n      session.observed.client_id.value ||\n        session.observed.redirect_uri.value ||\n        session.observed.wallet_jwks.observed ||\n        session.observed.dpop_jwk.observed,\n    );\n    updatedLabel.textContent = observed ? "observed" : "not observed";\n    metadataGrid.innerHTML = metadataRows(session)\n      .map(function (row) {\n        return \'<div class="metadata-row"><span>\' + escapeHtml(row[0]) + \'</span><code>\' + escapeHtml(row[1]) + \'</code></div>\';\n      })\n      .join("");\n    metadataJson.textContent = JSON.stringify(\n      {\n        session_id: session.session_id,\n        status: session.status,\n        observed: session.observed,\n        checks: session.checks,\n        events: session.events,\n      },\n      null,\n      2,\n    );\n  }\n\n  function escapeHtml(value) {\n    return String(value).replace(/[&<>"\']/g, function (char) {\n      return {\n        "&": "&amp;",\n        "<": "&lt;",\n        ">": "&gt;",\n        \'"\': "&quot;",\n        "\'": "&#39;",\n      }[char];\n    });\n  }\n\n  async function poll() {\n    const response = await fetch("/sessions/" + encodeURIComponent(sessionId), {\n      headers: { accept: "application/json" },\n    });\n    if (!response.ok) throw new Error("session fetch failed");\n    render(await response.json());\n  }\n\n  poll().catch(console.error);\n  setInterval(function () {\n    poll().catch(console.error);\n  }, 1500);\n})();';
+  return '(function () {\n  const sessionId = window.__FAKE_ISSUER_SESSION_ID__;\n  const qrCode = document.getElementById("qr-code");\n  const qrEmpty = document.getElementById("qr-empty");\n  const scanText = document.getElementById("scan-text");\n  const qrGuidance = document.getElementById("qr-guidance");\n  const statusLabel = document.getElementById("status-label");\n  const updatedLabel = document.getElementById("updated-label");\n  const metadataPanel = document.getElementById("metadata-panel");\n  const metadataStateLabel = document.getElementById("metadata-state-label");\n  const metadataGrid = document.getElementById("metadata-grid");\n  const metadataJson = document.getElementById("metadata-json");\n  let hasObservedMetadata = false;\n  let flashTimer = null;\n\n  function setQrConsumed(consumed) {\n    qrCode.hidden = consumed;\n    qrEmpty.hidden = !consumed;\n    scanText.textContent = consumed ? "Offer retrieved by wallet" : "Scan the offer and accept it in the wallet";\n    qrGuidance.textContent = consumed\n      ? "The wallet has retrieved the offer. Continue and accept the issuance in the wallet to send metadata back to this issuer."\n      : "After scanning, keep going in the wallet issuance flow. Most wallets ask you to accept the issuance before metadata appears here.";\n  }\n\n  function metadataRows(session) {\n    const walletJwks = session.observed.wallet_jwks.observed\n      ? JSON.stringify(session.observed.wallet_jwks.jwks)\n      : "not observed";\n    const dpopJwk = session.observed.dpop_jwk.observed\n      ? JSON.stringify(session.observed.dpop_jwk.jwk)\n      : "not observed";\n    return [\n      ["client_id", session.observed.client_id.value || "not observed"],\n      ["redirect_uri", session.observed.redirect_uri.value || "not observed"],\n      ["wallet_jwks", walletJwks],\n      ["dpop_jwk", dpopJwk],\n    ];\n  }\n\n  function sessionHasMetadata(session) {\n    return Boolean(\n      session.observed.client_id.value ||\n        session.observed.redirect_uri.value ||\n        session.observed.wallet_jwks.observed ||\n        session.observed.dpop_jwk.observed,\n    );\n  }\n\n  function setMetadataState(observed) {\n    metadataPanel.classList.toggle("metadata-pending", !observed);\n    metadataPanel.classList.toggle("metadata-ready", observed);\n    metadataStateLabel.textContent = observed ? "done" : "waiting";\n    metadataStateLabel.classList.toggle("metadata-state-waiting", !observed);\n    metadataStateLabel.classList.toggle("metadata-state-done", observed);\n  }\n\n  function flashMetadataPanel() {\n    metadataPanel.classList.remove("metadata-flash");\n    void metadataPanel.offsetWidth;\n    metadataPanel.classList.add("metadata-flash");\n    if (flashTimer) window.clearTimeout(flashTimer);\n    flashTimer = window.setTimeout(function () {\n      metadataPanel.classList.remove("metadata-flash");\n    }, 1400);\n  }\n\n  function render(session) {\n    setQrConsumed(session.status !== "created");\n    statusLabel.textContent = session.status.replaceAll("_", " ");\n    const observed = sessionHasMetadata(session);\n    updatedLabel.textContent = observed ? "observed" : "not observed";\n    setMetadataState(observed);\n    if (observed && !hasObservedMetadata) flashMetadataPanel();\n    hasObservedMetadata = observed;\n    metadataGrid.innerHTML = metadataRows(session)\n      .map(function (row) {\n        return \'<div class="metadata-row"><span>\' + escapeHtml(row[0]) + \'</span><code>\' + escapeHtml(row[1]) + \'</code></div>\';\n      })\n      .join("");\n    metadataJson.textContent = JSON.stringify(\n      {\n        session_id: session.session_id,\n        status: session.status,\n        observed: session.observed,\n        checks: session.checks,\n        events: session.events,\n      },\n      null,\n      2,\n    );\n  }\n\n  function escapeHtml(value) {\n    return String(value).replace(/[&<>"\']/g, function (char) {\n      return {\n        "&": "&amp;",\n        "<": "&lt;",\n        ">": "&gt;",\n        \'"\': "&quot;",\n        "\'": "&#39;",\n      }[char];\n    });\n  }\n\n  async function poll() {\n    const response = await fetch("/sessions/" + encodeURIComponent(sessionId), {\n      headers: { accept: "application/json" },\n    });\n    if (!response.ok) throw new Error("session fetch failed");\n    render(await response.json());\n  }\n\n  poll().catch(console.error);\n  setInterval(function () {\n    poll().catch(console.error);\n  }, 1500);\n})();';
 }
 
 function escapeHtml(value: string): string {

@@ -63,6 +63,10 @@ describe("capture issuer server", () => {
     expect(page.text).toContain("<svg");
     expect(page.text).toContain("openid-credential-offer://");
     expect(page.text).toContain("Scan with an EUDI Wallet");
+    expect(page.text).toContain("Scan the offer and accept it in the wallet");
+    expect(page.text).toContain("Same content as the QR code");
+    expect(page.text).toContain("metadata-pending");
+    expect(page.text).toContain("metadata-state-waiting");
     expect(page.text).toContain("Wallet metadata");
   });
 
