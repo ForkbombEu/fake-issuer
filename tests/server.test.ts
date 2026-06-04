@@ -14,6 +14,45 @@ const config = {
 };
 
 describe("capture issuer server", () => {
+  it("serves a launcher button that opens new GUI sessions in a new tab", async () => {
+    const app = createApp(config);
+    const response = await request(app).get("/");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("New fake-issuance session");
+    expect(response.text).toContain('target="_blank"');
+    expect(response.text).toContain("Fake Issuer%c Credimi capture UI");
+  });
+
+  it("creates GUI sessions and renders a QR deeplink page", async () => {
+    const app = createApp(config);
+    const created = await request(app).post("/ui/sessions").redirects(0);
+
+    expect(created.status).toBe(303);
+    expect(created.headers.location).toMatch(/^\/ui\/sessions\//);
+
+    const page = await request(app).get(created.headers.location ?? "");
+    expect(page.status).toBe(200);
+    expect(page.text).toContain("<svg");
+    expect(page.text).toContain("openid-credential-offer://");
+    expect(page.text).toContain("Scan with an EUDI Wallet");
+    expect(page.text).toContain("Wallet metadata");
+  });
+
+  it("marks GUI QR sessions consumed when the wallet retrieves the offer", async () => {
+    const app = createApp(config);
+    const created = await request(app).post("/ui/sessions").redirects(0);
+    const sessionId = (created.headers.location ?? "").split("/").pop() ?? "";
+
+    const initial = await getJson<SessionCapture>(app, `/sessions/${sessionId}`);
+    expect(initial.status).toBe("created");
+
+    const offer = await request(app).get(`/sessions/${sessionId}/offer`);
+    expect(offer.status).toBe(200);
+
+    const consumed = await getJson<SessionCapture>(app, `/sessions/${sessionId}`);
+    expect(consumed.status).toBe("offer_retrieved");
+  });
   it("creates session offers for the requested credential configuration", async () => {
     const app = createApp(config);
     const requestedCredentialConfigurationId = `${config.credential_configuration_id}.attestation`;

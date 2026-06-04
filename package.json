@@ -18,8 +18,10 @@
   },
   "dependencies": {
     "@credo-ts/openid4vc": "latest",
+    "@types/qrcode": "1.5.5",
     "express": "^4.19.2",
-    "jose": "^5.9.6"
+    "jose": "^5.9.6",
+    "qrcode": "1.5.4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

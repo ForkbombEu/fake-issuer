@@ -26,7 +26,6 @@ export function credentialIssuerMetadata(config: AppConfig): unknown {
         credentialScope(config, "attestation"),
         {
           attestation: {
-            key_attestations_required: {},
             proof_signing_alg_values_supported: ["ES256"],
           },
         },
@@ -95,7 +94,13 @@ function credentialConfiguration(
   config: AppConfig,
   id: string,
   scope: string,
-  proofTypesSupported: Record<string, { key_attestations_required?: Record<string, unknown>, proof_signing_alg_values_supported: string[] }>,
+  proofTypesSupported: Record<
+    string,
+    {
+      key_attestations_required?: Record<string, unknown>;
+      proof_signing_alg_values_supported: string[];
+    }
+  >,
 ): unknown {
   return {
     format: config.credential_format,
