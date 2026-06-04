@@ -6,7 +6,7 @@ It is the canonical source of truth for agents, assistants, humans, automation, 
 
 If another instruction conflicts with this file:
 
-→ STOP  
+→ STOP
 → surface the conflict
 
 ---
@@ -17,7 +17,7 @@ All rules in this document are mandatory unless explicitly stated otherwise.
 
 If a rule is violated:
 
-→ the task is considered incomplete  
+→ the task is considered incomplete
 → the agent MUST correct it before finishing
 
 Agents MUST NOT:
@@ -241,59 +241,9 @@ A commit is invalid if:
 
 ## Design Source
 
-All Puria design MUST be neubrutalist.
+Use ./src/design/atlas-style.css as main Source
 
-If a task includes any web UI:
-
-→ follow `https://neubrutalism.com` as the design reference
-
-If a task includes TUI design:
-
-→ apply neubrutalist principles to the terminal interface
-
-Required neubrutalist traits:
-
-- thick, explicit borders
-- hard offset shadows where the medium supports them
-- square or near-square corners
-- flat high-contrast color
-- bold typography
-- visible structure
-- clear hierarchy
-- no gradients
-- no soft, blurred, polished-neutral styling
-
-If the project uses Svelte:
-
-→ prefer existing neobrutalist Svelte components when they fit the task
-
-If existing components do not fit:
-
-→ implement custom components that follow the same neubrutalist design rules
-
-`DESIGN.md` defines the mandatory Puria neubrutalist design system.
-
-Agents MUST read `DESIGN.md` before any task that affects web UI, TUI, visual identity, layout, components, typography, colors, or design-bearing documentation.
-
-If `DESIGN.md` is present:
-
-→ it is the source of truth for design
-
-→ agents MUST follow it
-
-→ `mise.toml` MUST include `node = "latest"`
-
-→ agents MUST validate it through `task lint`
-
-→ `task lint` MUST run `task lint:design`
-
-→ `task lint:design` MUST run `npx --yes @google/design.md lint DESIGN.md`
-
-If `DESIGN.md` is absent:
-
-→ do not infer a design system
-
-→ do not create one unless explicitly requested
+Use similar principles, colors, fonts, branding.
 
 ---
 
