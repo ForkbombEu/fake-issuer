@@ -397,10 +397,11 @@ export function createApp(config: AppConfig, store = new CaptureStore(config)): 
       });
 
       res.json({
-        format: config.credential_format,
-        credential,
-        c_nonce: randomUUID(),
-        c_nonce_expires_in: config.nonce_ttl_seconds,
+        credentials: [
+          {
+            credential,
+          },
+        ],
       });
     } catch (error) {
       next(error);

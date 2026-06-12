@@ -192,8 +192,14 @@ describe("capture issuer server", () => {
       .send({ proof: { proof_type: "jwt", jwt: proof } });
 
     expect(credential.status).toBe(200);
-    expect(credential.body.format).toBe("dc+sd-jwt");
-    const compactSdJwt = credential.body.credential as string;
+    expect(credential.body).toEqual({
+      credentials: [
+        {
+          credential: expect.any(String),
+        },
+      ],
+    });
+    const compactSdJwt = (credential.body as CredentialResponse).credentials[0].credential;
     expect(compactSdJwt.split("~").length).toBeGreaterThan(2);
     const issuerJwt = compactSdJwt.split("~")[0];
     const issuerPayload = JSON.parse(
@@ -357,4 +363,10 @@ interface JwksResponse extends JsonRecord {
 
 interface CredentialOfferResponse extends JsonRecord {
   credential_configuration_ids: string[];
+}
+
+interface CredentialResponse extends JsonRecord {
+  credentials: Array<{
+    credential: string;
+  }>;
 }
