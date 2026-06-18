@@ -41,7 +41,7 @@ describe("capture issuer server", () => {
     expect(response.status).toBe(200);
     expect(response.text).toContain("New fake-issuance session");
     expect(response.text).toContain(
-      'href="https://github.com/ForkbombEu/fake-issuer/blob/master/README.md"',
+      '<span class="status-chip status-issuer">local issuer</span><a class="btn btn-outline btn-md" href="https://github.com/ForkbombEu/fake-issuer/blob/master/README.md"',
     );
     expect(response.text).toContain('target="_blank"');
     expect(response.text).toContain("Fake Issuer%c Credimi capture UI");
@@ -92,7 +92,7 @@ describe("capture issuer server", () => {
     expect(page.text).toContain("metadata-state-receiving");
     expect(page.text).toContain("credentialRequestArrived");
     expect(page.text).toContain(
-      'href="https://github.com/ForkbombEu/fake-issuer/blob/master/README.md"',
+      '<span class="status-chip status-issuer" id="status-label">waiting</span><a class="btn btn-outline btn-md" href="https://github.com/ForkbombEu/fake-issuer/blob/master/README.md"',
     );
     expect(page.text).not.toContain("updated-label");
     expect(page.text).toContain("Wallet metadata");
