@@ -57,10 +57,10 @@ http://localhost:8080/
 
 From the launcher, click `New fake-issuance session` to open a QR session in a new tab. Scan the QR with an EUDI Wallet. The session page updates as Wallet metadata, proof keys, DPoP keys, checks, and flow events are observed.
 
-The GUI includes a `Help` button that opens the rendered project README in a new tab:
+The GUI includes a `Help` button that opens the project README on GitHub in a new tab:
 
 ```text
-http://localhost:8080/ui/help
+https://github.com/ForkbombEu/fake-issuer/blob/master/README.md
 ```
 
 Disable the GUI by setting `GUI_ENABLED=false` in `.env`:

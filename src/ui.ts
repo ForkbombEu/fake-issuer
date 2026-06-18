@@ -1,3 +1,5 @@
+const HELP_README_URL = "https://github.com/ForkbombEu/fake-issuer/blob/master/README.md";
+
 export function indexPage(): string {
   return htmlPage({
     title: "Fake Issuer",
@@ -9,7 +11,9 @@ export function indexPage(): string {
       '<span class="brand-name">Credimi Fake Issuer</span>',
       "</div>",
       '<div class="topbar-actions">',
-      '<a class="btn btn-outline btn-md" href="/ui/help" target="_blank" rel="noreferrer">Help</a>',
+      '<a class="btn btn-outline btn-md" href="',
+      HELP_README_URL,
+      '" target="_blank" rel="noreferrer">Help</a>',
       '<span class="status-chip status-issuer">local issuer</span>',
       "</div>",
       "</div>",
@@ -56,7 +60,9 @@ export function sessionPage(sessionId: string, deeplink: string, qrSvg: string):
       '<span class="brand-name">Credimi Fake Issuer</span>',
       "</a>",
       '<div class="topbar-actions">',
-      '<a class="btn btn-outline btn-md" href="/ui/help" target="_blank" rel="noreferrer">Help</a>',
+      '<a class="btn btn-outline btn-md" href="',
+      HELP_README_URL,
+      '" target="_blank" rel="noreferrer">Help</a>',
       '<span class="status-chip status-issuer" id="status-label">waiting</span>',
       "</div>",
       "</div>",

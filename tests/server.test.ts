@@ -40,7 +40,9 @@ describe("capture issuer server", () => {
 
     expect(response.status).toBe(200);
     expect(response.text).toContain("New fake-issuance session");
-    expect(response.text).toContain('href="/ui/help"');
+    expect(response.text).toContain(
+      'href="https://github.com/ForkbombEu/fake-issuer/blob/master/README.md"',
+    );
     expect(response.text).toContain('target="_blank"');
     expect(response.text).toContain("Fake Issuer%c Credimi capture UI");
     expect(response.text).toContain('href="https://credimi.io/logos/credimi_logo.svg"');
@@ -89,6 +91,9 @@ describe("capture issuer server", () => {
     expect(page.text).toContain("metadata-state-waiting");
     expect(page.text).toContain("metadata-state-receiving");
     expect(page.text).toContain("credentialRequestArrived");
+    expect(page.text).toContain(
+      'href="https://github.com/ForkbombEu/fake-issuer/blob/master/README.md"',
+    );
     expect(page.text).not.toContain("updated-label");
     expect(page.text).toContain("Wallet metadata");
   });
